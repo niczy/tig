@@ -63,7 +63,7 @@ func (n *Node) hash() string {
 // Apply UpdateNode tree to current tree.
 func (n *Node) applyUpdateNodes(un *UpdateNode) {
 	childHash := make([]string, 0, len(n.childrenHash))
-	for i, ch := range n.childrenHash {
+	for _, ch := range n.childrenHash {
 		if _, ok := un.childUpdateNodes[ch]; ok {
 			u := un.childUpdateNodes[ch]
 			if u.updateType != Delete {

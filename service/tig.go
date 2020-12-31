@@ -2,13 +2,17 @@ package service
 
 import (
 	"io/ioutil"
-	"path/filepath"
 	"log"
+	"path/filepath"
 )
 
 type Tig struct {
 	root string
 }
+
+const (
+	Separator = "/"
+)
 
 func NewTig(root string) (t *Tig) {
   tig := &Tig{
@@ -33,6 +37,10 @@ func (t *Tig) ListFiles(dir string) []string {
 func (t *Tig) ReadFile(file string) string {
         ret, _ := ioutil.ReadFile(filepath.Join(t.root, file))	
 	return string(ret)
+}
+
+func (t *Tig) UpdateFile(path, content string) error {
+	return nil
 }
 
 func (t *Tig) GetRoot() string {

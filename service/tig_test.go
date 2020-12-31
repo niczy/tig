@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"path/filepath"
 	"io/ioutil"
+	"github.com/sergi/go-diff/diffmatchpatch"
+	"fmt"
 )
 
 
@@ -43,4 +45,12 @@ func TestListFiles(t *testing.T) {
 
 	tmpData := tig.ReadFile("h.txt")
 	assert.Equal(t, tmpData, str)
+}
+
+func TestDiff(t *testing.T) {
+	text1 := "hello world"
+	text2 := "hellp baba"
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(text1, text2, false)
+	fmt.Println(dmp.DiffPrettyText(diffs))
 }

@@ -3,9 +3,8 @@ package service
 import (
 	"fmt"
 	"github.com/sergi/go-diff/diffmatchpatch"
-	"io/ioutil"
+	"log"
 	"os"
-	"path/filepath"
 	"strconv"
 )
 
@@ -14,11 +13,6 @@ import (
 	"testing"
 )
 
-func TestNewTig(t *testing.T) {
-	tig := NewTig("./test_data")
-	assert.Equal(t, tig.GetRoot(), "./test_data")
-}
-
 func TestListFiles(t *testing.T) {
 	root := "./test_data"
 	os.RemoveAll(root)
@@ -26,23 +20,26 @@ func TestListFiles(t *testing.T) {
 
 	defer os.RemoveAll(root)
 
-	tig := NewTig("./test_data")
-	files := tig.ListFiles(".")
-	assert.Equal(t, files, []string{})
+	tig := NewTig()
+	files, err := tig.ListFiles("/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	assert.Equal(t, []string{}, files)
 
 	for i:=0; i < 10; i++ {
-		os.Create(filepath.Join(root, strconv.Itoa(i)+".txt"))
+		tig.UpdateFile(strconv.Itoa(i)+".txt", "content")
 	}
 
 	expectedFiles := []string{"0.txt", "1.txt", "2.txt", "3.txt", "4.txt", "5.txt", "6.txt", "7.txt", "8.txt", "9.txt"}
 
-	files = tig.ListFiles(".")
-	assert.Equal(t, files, expectedFiles)
+	files, _ = tig.ListFiles("/")
+	assert.Equal(t, expectedFiles, files)
 
 	str := "Hello world!"
-	ioutil.WriteFile(filepath.Join(root, "h.txt"), []byte(str), 0644)
+	tig.UpdateFile("h.txt", str)
 
-	tmpData := tig.ReadFile("h.txt")
+	tmpData, _ := tig.ReadFile("h.txt")
 	assert.Equal(t, tmpData, str)
 }
 

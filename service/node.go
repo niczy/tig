@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"log"
 )
@@ -25,9 +26,7 @@ const (
 )
 
 
-var (
-	nodeStore = NewNodeStore()
-)
+
 
 func NewRoot(name string) *Node {
 	return &Node{
@@ -61,6 +60,62 @@ func (n *Node) hash() string {
 	h.Write([]byte(fmt.Sprintf("%v", *n)))
 
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func (n *Node) listFiles(paths []string) ([]string, error) {
+	leaf := n.getNodeByPaths(paths)
+	if leaf == nil {
+		return nil, errors.New("path not found")
+	}
+	if !leaf.isDir {
+		return nil, errors.New("path is not a directory")
+	}
+	// Build list of files.
+	ret := make([]string, 0, leaf.childrenLength())
+	for i:=0; i < leaf.childrenLength(); i++ {
+		c := leaf.child(i)
+		ret = append(ret, c.name)
+	}
+	return ret, nil
+}
+
+func (n *Node) childrenLength() int {
+	return len(n.childrenHash)
+}
+
+func (n *Node) child(idx int) *Node {
+	c := nodeStore.getNode(n.childrenHash[idx])
+	return &c
+}
+
+func (n *Node) childByName(name string) *Node {
+	for _, ch := range n.childrenHash {
+		c := nodeStore.getNode(ch)
+		if c.name == name {
+			return &c
+		}
+	}
+	return nil
+}
+
+func (n *Node) getNodeByPaths(paths []string) *Node {
+	for _, path := range paths {
+		if path == "" {
+			continue
+		}
+		exist := false
+		for i:=0; i < n.childrenLength(); i++ {
+			if path == n.child(i).name {
+				n = n.child(i)
+				exist = true
+				break
+			}
+		}
+		if !exist {
+			return nil
+		}
+	}
+	return n
 }
 
 // Apply UpdateNode tree to current tree.

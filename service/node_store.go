@@ -4,6 +4,10 @@ type NodeStore struct {
 	kv map[string]Node
 }
 
+var (
+	nodeStore = NewNodeStore()
+)
+
 func NewNodeStore() *NodeStore {
 	return &NodeStore{
 		kv: make(map[string]Node),

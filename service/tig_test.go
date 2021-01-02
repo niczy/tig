@@ -1,18 +1,17 @@
 package service
 
 import (
-	"os"
-	"strconv"
-	"path/filepath"
-	"io/ioutil"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"fmt"
+	"github.com/sergi/go-diff/diffmatchpatch"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strconv"
 )
 
-
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNewTig(t *testing.T) {

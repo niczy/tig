@@ -23,8 +23,10 @@ func main() {
 		subCmd := os.Args[1]
 		switch subCmd {
 		case "submit":
+			// Submit latest patch to server.
 			fmt.Println("submit command")
 		case "export":
+			// Example local change and master, generate patch file.
 			fmt.Println("export command")
 		}
 	}
